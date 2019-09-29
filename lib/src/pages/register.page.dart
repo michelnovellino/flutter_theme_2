@@ -4,12 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_theme_2/src/widgets/circles.widget.dart';
 import 'package:flutter_theme_2/src/widgets/input.widget.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
@@ -48,11 +48,34 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SingleChildScrollView(
-                    child: SafeArea(
-                  child: Column(
-                    children: <Widget>[_renderBody(context)],
+                  padding: EdgeInsetsDirectional.only(top: _size.height * 0.10),
+                  child: SafeArea(
+                    child: Column(
+                      
+                      children: <Widget>[_renderBody(context)],
+                    ),
                   ),
-                ))
+                ),
+                Positioned(
+                  top: _size.width * 0.02,
+                  left: _size.width * 0.02,
+                  child: SafeArea(
+                    child: CupertinoButton(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10.0),
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(100.0),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 26,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                )
               ],
             )),
       ),
@@ -64,7 +87,6 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       height: size.height,
       width: size.width,
-      padding: EdgeInsets.only(top: size.height * 0.03),
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -74,7 +96,6 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   height: 70,
                   width: 70,
-                  margin: EdgeInsets.only(top: size.width * 0.2),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(17),
@@ -110,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: CupertinoButton(
                     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
                     child: Text(
-                      'Sign In',
+                      'Sign Up',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -139,6 +160,16 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             children: <Widget>[
               CustomInputText(
+                label: 'Username',
+                validator: (String value) {
+                  if (RegExp("r'^[a-zA-Z0-9]").hasMatch(value)) {
+                    return null;
+                  } else {
+                    return 'invalid Username';
+                  }
+                },
+              ),
+              CustomInputText(
                 label: 'Email',
                 validator: (String value) {
                   if (value.contains('@')) {
@@ -166,20 +197,20 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text('New to friendly design?',
+            Text('Already register?',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
             SizedBox(width: size.width * 0.08),
             CupertinoButton(
               padding: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
               child: Text(
-                'Sign Up',
+                'Sign In',
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.pinkAccent),
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed('register');
+                Navigator.of(context).pop();
               },
             ),
           ],
