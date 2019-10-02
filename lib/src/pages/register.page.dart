@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_theme_2/src/services/auth.service.dart';
+import 'package:flutter_theme_2/src/utils/alerts.util.dart';
 import 'package:flutter_theme_2/src/widgets/circles.widget.dart';
 import 'package:flutter_theme_2/src/widgets/input.widget.dart';
 
@@ -11,6 +13,11 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
+  String _username;
+  String _email;
+  String _password;
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +58,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   padding: EdgeInsetsDirectional.only(top: _size.height * 0.10),
                   child: SafeArea(
                     child: Column(
-                      
                       children: <Widget>[_renderBody(context)],
                     ),
                   ),
@@ -136,7 +142,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     color: Colors.pinkAccent,
-                    onPressed: () => _submit(),
+                    onPressed: () => _submit(context),
                   ),
                 ),
               ],
@@ -162,7 +168,8 @@ class _RegisterPageState extends State<RegisterPage> {
               CustomInputText(
                 label: 'Username',
                 validator: (String value) {
-                  if (RegExp("r'^[a-zA-Z0-9]").hasMatch(value)) {
+                  if (RegExp("[a-zA-Z]").hasMatch(value)) {
+                    _username = value;
                     return null;
                   } else {
                     return 'invalid Username';
@@ -173,6 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 label: 'Email',
                 validator: (String value) {
                   if (value.contains('@')) {
+                    _email = value;
                     return null;
                   } else {
                     return 'invalid email';
@@ -184,6 +192,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 obscureText: true,
                 validator: (String value) {
                   if (value != null && value.length > 5) {
+                    _password = value;
                     return null;
                   } else {
                     return 'min length 5';
@@ -219,7 +228,18 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  _submit() {
-    _formKey.currentState.validate();
+  _submit(context) async {
+    final isValid = _formKey.currentState.validate();
+    if (isValid) {
+      final isOk = await _authService.register(
+        username: _username.toString(),
+        email: _email.toString(),
+        password: _password.toString());
+      if (isOk) {
+        showAlert(context, 'Register success');
+      } else {
+        showAlert(context, 'error');
+      }
+    }
   }
 }
