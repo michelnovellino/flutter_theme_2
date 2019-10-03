@@ -1,3 +1,3 @@
 class AppConf {
-  static const String host = "http://localhost:3000/api/v1";
+  static const String host = "<domain>:3000/api/v1";
 }

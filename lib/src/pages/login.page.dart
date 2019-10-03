@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_theme_2/src/services/auth.service.dart';
 import 'package:flutter_theme_2/src/widgets/circles.widget.dart';
 import 'package:flutter_theme_2/src/widgets/input.widget.dart';
 
@@ -11,6 +12,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
+  bool _isSubmit = false;
+  String _email;
+  String _password;
   @override
   void initState() {
     super.initState();
@@ -52,7 +57,17 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: <Widget>[_renderBody(context)],
                   ),
-                ))
+                )),
+                _isSubmit
+                    ? Positioned.fill(
+                        child: Container(
+                          color: Colors.black45,
+                          child: CupertinoActivityIndicator(
+                            radius: 15,
+                          ),
+                        ),
+                      )
+                    : Container()
               ],
             )),
       ),
@@ -142,6 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                 label: 'Email',
                 validator: (String value) {
                   if (value.contains('@')) {
+                    _email = value;
                     return null;
                   } else {
                     return 'invalid email';
@@ -153,6 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
                 validator: (String value) {
                   if (value != null && value.length > 5) {
+                    _password = value;
                     return null;
                   } else {
                     return 'min length 5';
@@ -188,7 +205,21 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  _submit() {
-    _formKey.currentState.validate();
+  _submit() async {
+    if (_isSubmit) return;
+
+    final isValid = _formKey.currentState.validate();
+    if (isValid) {
+      setState(() {
+        _isSubmit = true;
+      });
+      final isOk = await _authService.login(context,
+          email: _email.toString(), password: _password.toString());
+      setState(() {
+        _isSubmit = false;
+      });
+      if (isOk) {
+      } else {}
+    }
   }
 }
